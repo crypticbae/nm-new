@@ -9,8 +9,8 @@ WORKDIR /app
 # Package files kopieren
 COPY package.json package-lock.json* ./
 
-# Dependencies installieren (mit Cache)
-RUN npm ci
+# Dependencies installieren (npm install statt ci wegen Downgrade)
+RUN npm install
 
 # 2. Build Stage
 FROM base AS builder
