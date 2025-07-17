@@ -1,0 +1,76 @@
+# 🌟 Neon Murer AG - Production Docker Compose
+# Production-ready Setup mit Nginx Reverse Proxy und SSL
+#
+# Verwendung:
+# 1. curl -o docker-compose.yml https://raw.githubusercontent.com/crypticbae/nm-new/main/docker-compose.production.yml
+# 2. Domain in DOMAIN_NAME Environment Variable oder direkt hier eintragen
+# 3. docker-compose up -d
+# 4. Website läuft auf https://deine-domain.com
+
+version: '3.8'
+
+services:
+  # Next.js Website
+  neon-murer-website:
+    image: ghcr.io/crypticbae/nm-new:latest
+    container_name: neon-murer-website
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - neon-murer-logs:/app/.next/logs
+    networks:
+      - neon-murer-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: neon-murer-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # 🔧 HIER DEINE DOMAIN EINTRAGEN:
+      - DOMAIN_NAME=${DOMAIN_NAME:-neonmurer.com}
+    volumes:
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - certbot-data:/var/www/certbot:ro
+    depends_on:
+      - neon-murer-website
+    networks:
+      - neon-murer-network
+
+  # Optional: Certbot für automatische SSL-Zertifikate
+  certbot:
+    image: certbot/certbot
+    container_name: neon-murer-certbot
+    restart: unless-stopped
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - certbot-data:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@neonmurer.com --agree-tos --no-eff-email -d ${DOMAIN_NAME:-neonmurer.com} -d www.${DOMAIN_NAME:-neonmurer.com}
+
+volumes:
+  neon-murer-logs:
+    driver: local
+  certbot-data:
+    driver: local
+
+networks:
+  neon-murer-network:
+    driver: bridge
+    labels:
+      - "com.neonmurer.network=production" 

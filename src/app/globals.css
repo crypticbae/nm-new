@@ -134,7 +134,7 @@ html {
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--bc) / 0.3);
   border-radius: 4px;
-}
+  }
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--bc) / 0.5);

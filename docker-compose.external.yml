@@ -30,7 +30,7 @@ services:
       - "com.neonmurer.service=website"
       - "com.neonmurer.version=latest"
       - "traefik.enable=true"
-      - "traefik.http.routers.neon-murer.rule=Host(`localhost`) || Host(`127.0.0.1`) || Host(`deine-domain.com`)"
+      - "traefik.http.routers.neon-murer.rule=Host(`localhost`) || Host(`127.0.0.1`) || Host(`neonmurer.com`) || Host(`www.neonmurer.com`)"
       - "traefik.http.services.neon-murer.loadbalancer.server.port=3000"
     volumes:
       # Optional: Logs volume
