@@ -1,5 +1,5 @@
 # Dockerfile für Neon Murer AG Next.js App
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -16,9 +16,18 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Environment variables for build
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
-# Build the app
+# Debug: Show Node and npm versions
+RUN node --version && npm --version
+
+# Create minimal TailwindCSS config for v4 if not exists
+RUN if [ ! -f tailwind.config.js ] && [ ! -f tailwind.config.ts ]; then \
+  echo 'export default { content: ["./src/**/*.{js,ts,jsx,tsx}"] }' > tailwind.config.js; \
+fi
+
+# Build the app with verbose logging
 RUN npm run build
 
 # Production image, copy all the files and run next
