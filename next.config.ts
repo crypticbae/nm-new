@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Für Docker deployment
-  output: 'standalone',
+  output: 'export',
+  trailingSlash: true,
   
   // Image optimization für Docker
   images: {
