@@ -1,26 +1,51 @@
 # 🌟 Neon Murer AG - Moderne Website
 
-Moderne Next.js Website für die Neon Murer AG - Lichtwerbung & Werbetechnik seit 1949.
+Moderne Next.js Website für die **Neon Murer AG** - Lichtwerbung & Werbetechnik seit 1949.
 
-## 🚀 Features
+## 🚀 Quick Start (Externe Verwendung)
 
-- **Next.js 15** mit TypeScript
-- **Responsive Design** mit TailwindCSS & DaisyUI
-- **SEO optimiert** mit Meta-Tags
-- **Performance optimiert** mit Image Optimization
-- **Docker ready** für einfaches Deployment
+**Ohne Repository klonen** - nur mit Docker:
 
-## 📱 Seiten
+```bash
+# 1. Docker Compose Datei herunterladen
+curl -o docker-compose.yml https://raw.githubusercontent.com/crypticbae/nm-new/main/docker-compose.external.yml
 
-- **Homepage** - Hero, Services, About
-- **Lichtwerbung** - 5 Unterkategorien (Leuchtschriften, Leuchttransparente, etc.)
-- **Beschriftungen** - 6 Unterkategorien (Fahrzeug, Fenster, Tafel, etc.)
-- **Digital Signage** - LED Displays & Systeme
-- **Dienstleistungen** - 6 Services (Beratung, Bewilligung, Montage, etc.)
-- **Über uns** - 4 Unterkategorien (Fachkompetenzen, Geschichte, Team, Jobs)
+# 2. Website starten  
+docker-compose up -d
 
-## 🛠 Lokale Entwicklung
+# 3. Website läuft auf http://localhost:3000
+```
 
+Das war's! 🎉
+
+## 📱 Website Features
+
+* **Responsive Design** mit TailwindCSS & DaisyUI
+* **SEO optimiert** mit Next.js 15
+* **Performance optimiert** mit Image Optimization
+* **Docker ready** für einfaches Deployment
+
+### 📂 Haupt-Seiten
+
+* **Homepage** - Hero, Services, About
+* **Lichtwerbung** - 5 Unterkategorien (Leuchtschriften, Leuchttransparente, etc.)
+* **Beschriftungen** - 6 Unterkategorien (Fahrzeug, Fenster, Tafel, etc.)
+* **Digital Signage** - LED Displays & Systeme
+* **Dienstleistungen** - 6 Services (Beratung, Bewilligung, Montage, etc.)
+* **Über uns** - 4 Unterkategorien (Fachkompetenzen, Geschichte, Team, Jobs)
+
+## 🐳 Docker Deployment
+
+### Einfach (für externe Verwendung)
+```bash
+# Direkt vom GitHub Container Registry
+docker run -d \
+  --name neon-murer-website \
+  -p 3000:3000 \
+  ghcr.io/crypticbae/nm-new:latest
+```
+
+### Entwicklung (lokal)
 ```bash
 # Dependencies installieren
 npm install
@@ -31,77 +56,52 @@ npm run dev
 # Website unter http://localhost:3000
 ```
 
-## 🐳 Docker Deployment
+## 🤖 Automatisches Deployment
 
-### Schnell-Start (Einfach)
-```bash
-# Repository klonen
-git clone https://github.com/IHR-USERNAME/neon-murer-website.git
-cd neon-murer-website
+- **GitHub Actions** baut automatisch Docker Images
+- **Push to main** triggert neuen Build
+- **Image verfügbar**: `ghcr.io/crypticbae/nm-new:latest`
+- **Keine lokalen Builds** nötig für Deployment
 
-# Docker Container starten
-docker-compose -f docker-compose.simple.yml up -d --build
+## 📋 Komplette Anleitung
 
-# Website unter http://server-ip:3000
-```
-
-### Professionell (mit Nginx)
-```bash
-# Mit Nginx Reverse Proxy
-docker-compose up -d --build
-
-# Website unter http://server-ip
-```
-
-### Automatisches Deployment
-```bash
-# Deployment Script verwenden
-chmod +x deploy.sh
-./deploy.sh simple    # oder
-./deploy.sh full
-```
-
-## 📋 Detaillierte Anleitung
-
-Siehe **[DEPLOYMENT.md](DEPLOYMENT.md)** für die komplette Schritt-für-Schritt Anleitung.
-
-## 🏗 Architektur
-
-```
-neon-murer-website/
-├── src/
-│   ├── app/                 # Next.js App Router
-│   │   ├── lichtwerbung/    # Lichtwerbung + 5 Unterkategorien
-│   │   ├── beschriftungen/  # Beschriftungen + 6 Unterkategorien
-│   │   ├── digital-signage/ # Digital Signage
-│   │   ├── dienstleistungen/# Services
-│   │   └── ueber-uns/       # Über uns + 4 Unterkategorien
-│   └── components/          # React Components
-│       ├── Header.tsx       # Navigation
-│       ├── Footer.tsx       # Footer
-│       └── Hero.tsx         # Hero Section
-├── public/images/           # Bilder & Assets
-├── Dockerfile              # Multi-stage Docker Build
-├── docker-compose.yml      # Nginx + App
-├── docker-compose.simple.yml # Nur App
-├── nginx.conf              # Nginx Konfiguration
-└── deploy.sh               # Deployment Script
-```
+Siehe **[DEPLOYMENT.md](./DEPLOYMENT.md)** für die komplette Schritt-für-Schritt Anleitung.
 
 ## 🎨 Design System
 
-- **Primärfarbe:** #112357 (Neon Murer Blau)
-- **Sekundärfarbe:** #ffd401 (Neon Murer Gelb)
-- **Typography:** Inter Font
-- **Framework:** TailwindCSS + DaisyUI
-- **Theme:** Custom "neon-murer" Theme
+* **Primärfarbe:** #112357 (Neon Murer Blau)
+* **Sekundärfarbe:** #ffd401 (Neon Murer Gelb)  
+* **Typography:** Inter Font
+* **Framework:** TailwindCSS + DaisyUI
+* **Theme:** Custom "neon-murer" Theme
+
+## 🏗 Tech Stack
+
+* **Frontend:** Next.js 15, TypeScript, TailwindCSS, DaisyUI
+* **Deployment:** Docker, GitHub Actions, GitHub Container Registry
+* **Development:** ESLint, PostCSS, Responsive Design
+
+## 🔄 Updates
+
+```bash
+# Container stoppen
+docker-compose down
+
+# Neueste Version holen
+docker-compose pull
+
+# Mit neuer Version starten
+docker-compose up -d
+```
 
 ## 📞 Kontakt
 
 **Neon Murer AG**
-- 📞 +41 55 225 50 25
-- 📧 neon@neonmurer.ch
-- 🌐 Rapperswil-Jona & Uznach
+* 📞 +41 55 225 50 25
+* 📧 neon@neonmurer.ch  
+* 🌐 Rapperswil-Jona & Uznach
+
+---
 
 ## 📄 Lizenz
 

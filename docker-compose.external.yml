@@ -1,0 +1,49 @@
+# 🌟 Neon Murer AG - External Docker Compose
+# Diese Datei kann direkt verwendet werden ohne das Repository zu klonen!
+#
+# Verwendung:
+# 1. curl -o docker-compose.yml https://raw.githubusercontent.com/crypticbae/nm-new/main/docker-compose.external.yml
+# 2. docker-compose up -d
+# 3. Website läuft auf http://localhost:3000
+
+version: '3.8'
+
+services:
+  neon-murer-website:
+    image: ghcr.io/crypticbae/nm-new:latest
+    container_name: neon-murer-website
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.neonmurer.service=website"
+      - "com.neonmurer.version=latest"
+      - "traefik.enable=true"
+      - "traefik.http.routers.neon-murer.rule=Host(`localhost`) || Host(`127.0.0.1`) || Host(`deine-domain.com`)"
+      - "traefik.http.services.neon-murer.loadbalancer.server.port=3000"
+    volumes:
+      # Optional: Logs volume
+      - neon-murer-logs:/app/.next/logs
+    networks:
+      - neon-murer-network
+
+volumes:
+  neon-murer-logs:
+    driver: local
+
+networks:
+  neon-murer-network:
+    driver: bridge
+    labels:
+      - "com.neonmurer.network=main" 

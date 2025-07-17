@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
-.pnp.js
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -31,8 +31,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*.local
-.env
+.env*
 
 # vercel
 .vercel
@@ -40,28 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-Thumbs.db
-
-# Docker
-.dockerignore
-
-# SSL Certificates (sollten nicht ins Repository)
-/ssl/
-*.crt
-*.key
-*.pem
-
-# Logs
-*.log
-
-# Backup files
-*.backup
-*.bak

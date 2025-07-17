@@ -1,26 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Für Docker deployment
-  output: 'export',
-  trailingSlash: true,
+  // Für Docker optimierte Konfiguration
+  output: 'standalone',
   
-  // Image optimization für Docker
+  // Image Optimierung
   images: {
-    unoptimized: true, // Wichtig für Docker builds
+    domains: ['localhost'],
+    unoptimized: false,
   },
   
-  // TypeScript/ESLint Fehler ignorieren für Build
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+  // Performance Optimierungen
+  experimental: {
+    optimizeCss: true,
   },
   
-  // Optimierungen deaktivieren für stabileren Build
-  experimental: {},
-  swcMinify: false, // Deaktiviere SWC Minification
+  // Disable telemetry
+  telemetry: false,
 };
 
 export default nextConfig;

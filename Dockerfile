@@ -1,44 +1,49 @@
-# Einfacher statischer Build mit nginx
-FROM node:18-alpine AS builder
+# Dockerfile für Neon Murer AG Next.js App
+FROM node:18-alpine AS base
 
+# Install dependencies only when needed
+FROM base AS deps
 WORKDIR /app
 
-# Package files kopieren
-COPY package.json ./
-COPY package-lock*.json ./
+# Install dependencies based on the preferred package manager
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production && npm cache clean --force
 
-# Dependencies installieren
-RUN npm install --legacy-peer-deps
-
-# Source code kopieren
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Environment variables
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
+# Environment variables for build
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Statischen Build erstellen
+# Build the app
 RUN npm run build
 
-# Production Stage mit nginx
-FROM nginx:alpine AS runner
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
 
-# nginx Konfiguration
-RUN echo 'server { \
-    listen 3000; \
-    server_name localhost; \
-    location / { \
-        root /usr/share/nginx/html; \
-        index index.html index.htm; \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Statische Dateien kopieren
-COPY --from=builder /app/out /usr/share/nginx/html
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Port exposieren
+# Copy the public folder
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
 EXPOSE 3000
 
-# nginx starten
-CMD ["nginx", "-g", "daemon off;"] 
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"] 
