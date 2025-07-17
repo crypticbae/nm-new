@@ -1,0 +1,29 @@
+# 🚀 VOLLAUTOMATISCHES DEPLOYMENT - Nur Repository URL ändern!
+# 
+# ANLEITUNG:
+# 1. Diese Datei auf Server kopieren
+# 2. Repository URL unten anpassen 
+# 3. docker-compose -f docker-compose.auto.yml up -d
+# 4. Fertig! Website läuft unter http://server-ip:3000
+#
+version: '3.8'
+
+services:
+  neon-murer-auto:
+    build:
+      context: https://github.com/IHR-USERNAME/neon-murer-website.git  # ← ÄNDERN SIE DIESE URL!
+      dockerfile: Dockerfile
+    container_name: neon-murer-auto
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
