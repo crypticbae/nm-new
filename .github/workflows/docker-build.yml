@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/nm-new
+  IMAGE_NAME: crypticbae/nm-new
 
 jobs:
   build-and-push:
@@ -18,36 +18,39 @@ jobs:
       contents: read
       packages: write
       id-token: write
+      actions: read
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Log in to Container Registry
       if: github.event_name != 'pull_request'
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}
-
-    - name: Make image name lowercase
-      id: lowercase
-      run: echo "image_name=$(echo '${{ env.IMAGE_NAME }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract metadata
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
           type=ref,event=branch
           type=ref,event=pr
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+        labels: |
+          org.opencontainers.image.title=Neon Murer AG Website
+          org.opencontainers.image.description=Moderne Next.js Website für Neon Murer AG
+          org.opencontainers.image.vendor=Neon Murer AG
+          org.opencontainers.image.source=${{ github.repositoryUrl }}
+          org.opencontainers.image.revision=${{ github.sha }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -59,10 +62,24 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
+
+    - name: Test Docker image
+      if: github.event_name != 'pull_request'
+      run: |
+        echo "🧪 Testing Docker image..."
+        docker run --rm -d -p 3001:3000 --name test-container ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        sleep 10
+        curl -f http://localhost:3001/ || exit 1
+        docker stop test-container
+        echo "✅ Image test passed!"
 
     - name: Generate deployment info
       if: github.event_name != 'pull_request'
       run: |
-        echo "🚀 Docker Image erfolgreich erstellt!"
+        echo "🚀 Docker Image erfolgreich erstellt und getestet!"
         echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-        echo "🔗 Verwende die docker-compose.yml aus dem Repository für Deployment!" 
+        echo "🔗 Externe Verwendung:"
+        echo "curl -o docker-compose.yml https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.external.yml"
+        echo "docker-compose up -d" 
