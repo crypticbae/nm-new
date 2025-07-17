@@ -18,9 +18,8 @@ const nextConfig: NextConfig = {
   },
   
   // Optimierungen deaktivieren für stabileren Build
-  experimental: {
-    optimizeCss: false,
-  },
+  experimental: {},
+  swcMinify: false, // Deaktiviere SWC Minification
 };
 
 export default nextConfig;
