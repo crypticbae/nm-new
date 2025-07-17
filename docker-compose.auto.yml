@@ -11,7 +11,7 @@ version: '3.8'
 services:
   neon-murer-auto:
     build:
-      context: https://github.com/IHR-USERNAME/neon-murer-website.git  # ← ÄNDERN SIE DIESE URL!
+      context: https://github.com/crypticbae/nm-new.git  # ← ÄNDERN SIE DIESE URL!
       dockerfile: Dockerfile
     container_name: neon-murer-auto
     restart: unless-stopped

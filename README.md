@@ -33,27 +33,7 @@ npm run dev
 
 ## 🐳 Docker Deployment
 
-### 🚀 VOLLAUTOMATISCH (Empfohlen!)
-```bash
-# Nur eine Datei + Repository URL - FERTIG!
-wget https://raw.githubusercontent.com/IHR-USERNAME/neon-murer-website/main/docker-compose.auto.yml
-nano docker-compose.auto.yml  # Repository URL anpassen
-docker-compose -f docker-compose.auto.yml up -d
-
-# Website unter http://server-ip:3000
-```
-
-### ⚡ Super-Quick Script
-```bash
-# Ein Befehl - FERTIG!
-wget https://raw.githubusercontent.com/IHR-USERNAME/neon-murer-website/main/quick-deploy.sh
-chmod +x quick-deploy.sh
-./quick-deploy.sh https://github.com/IHR-USERNAME/neon-murer-website.git
-
-# Website unter http://server-ip:3000
-```
-
-### 📂 Manuell klonen
+### Schnell-Start (Einfach)
 ```bash
 # Repository klonen
 git clone https://github.com/IHR-USERNAME/neon-murer-website.git
@@ -65,14 +45,20 @@ docker-compose -f docker-compose.simple.yml up -d --build
 # Website unter http://server-ip:3000
 ```
 
-### 🏢 Professionell (mit Nginx)
+### Professionell (mit Nginx)
 ```bash
-# Repository klonen + Nginx Reverse Proxy
-git clone https://github.com/IHR-USERNAME/neon-murer-website.git
-cd neon-murer-website
+# Mit Nginx Reverse Proxy
 docker-compose up -d --build
 
 # Website unter http://server-ip
+```
+
+### Automatisches Deployment
+```bash
+# Deployment Script verwenden
+chmod +x deploy.sh
+./deploy.sh simple    # oder
+./deploy.sh full
 ```
 
 ## 📋 Detaillierte Anleitung
